@@ -1,0 +1,10 @@
+ECHO is on.
+*.log 
+.idea/ 
+.vscode/ 
+target/ 
+*.class 
+bin/ 
+out/ 
+.DS_Store 
+Thumbs.db 
