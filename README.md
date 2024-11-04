@@ -66,4 +66,3 @@ The database includes two main tables:
 3. **Retrieve Transactions for a Customer**: Use `GET /api/customers/{customerId}/transactions` to get all transactions for a customer.
 4. **Calculate Rewards for a Customer**: Use `GET /api/customers/{customerId}/rewards?months={months}` to get rewards for a customer over a period.
 5. **Calculate Rewards for All Customers**: Use `GET /api/customers/rewards?months={months}` to get total rewards for all customers.
-
