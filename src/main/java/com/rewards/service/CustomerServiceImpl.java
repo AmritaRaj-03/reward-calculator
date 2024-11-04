@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
 	        }
 
 	        // Fetch the customer
-	        Customer customer = customerDao.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+	        Customer customer = customerDao.findById(customerId).orElseThrow(() -> new NoSuchElementException("Customer not found"));
 
 	        // Fetch transactions for the last 'months' period
 	        LocalDate endDate = LocalDate.now();

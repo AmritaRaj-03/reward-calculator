@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,4 +78,36 @@ public class CustomerServiceImplTest {
 
 		assertTrue(actualMessage.contains(expectedMessage));
 	}
+
+	@Test
+	public void testCalculateRewardsWithNoTransactions() {
+		Long customerId = 1L;
+		Customer mockCustomer = new Customer();
+		mockCustomer.setId(customerId);
+		when(customerDao.findById(customerId)).thenReturn(Optional.of(mockCustomer));
+		when(transactionRepo.findByCustomerIdAndTransactionDateBetween(anyLong(), any(), any()))
+				.thenReturn(new ArrayList<>()); // No transactions
+
+		CustomerRewardsResponse response = customerService.calculateRewards(customerId, 3);
+
+		assertEquals(0, response.getTotalRewards()); // Expecting zero rewards
+		assertEquals(customerId, response.getCustomerId());
+		assertTrue(response.getTransactions().isEmpty()); // Expecting empty transaction list
+	}
+
+	@Test
+	public void testCustomerNotFound() {
+		Long customerId = 1L;
+		when(customerDao.findById(customerId)).thenReturn(Optional.empty()); // No customer found
+
+		Exception exception = assertThrows(NoSuchElementException.class, () -> {
+			customerService.calculateRewards(customerId, 3);
+		});
+
+		String expectedMessage = "Customer not found";
+		String actualMessage = exception.getMessage();
+
+		assertTrue(actualMessage.contains(expectedMessage));
+	}
+
 }
