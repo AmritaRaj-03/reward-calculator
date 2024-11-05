@@ -52,17 +52,100 @@ The database includes two main tables:
 
 ## API Endpoints
 
-| Endpoint                                           | Method | Description                                                                                       |
-|----------------------------------------------------|--------|---------------------------------------------------------------------------------------------------|
-| `/api/customers`                                   | GET    | Retrieves a list of all customers.                                                                |
-| `/api/customers/{id}`                              | GET    | Retrieves details of a specific customer by ID.                                                   |
-| `/api/customers/{customerId}/transactions`         | GET    | Retrieves a list of transactions for a specific customer by their ID.                             |
-| `/api/customers/{customerId}/rewards`              | GET    | Calculates and retrieves reward points for a specific customer over a specified period.           |
-| `/api/customers/rewards`                           | GET    | Calculates and retrieves total reward points for all customers over a specified period.           |
+The following are the available endpoints for the Customer Rewards API:
 
-### Example Usage
-1. **Retrieve All Customers**: Use `GET /api/customers` to get a list of all registered customers.
-2. **Retrieve Customer by ID**: Use `GET /api/customers/{id}` to fetch a customer’s details by their unique ID.
-3. **Retrieve Transactions for a Customer**: Use `GET /api/customers/{customerId}/transactions` to get all transactions for a customer.
-4. **Calculate Rewards for a Customer**: Use `GET /api/customers/{customerId}/rewards?months={months}` to get rewards for a customer over a period.
-5. **Calculate Rewards for All Customers**: Use `GET /api/customers/rewards?months={months}` to get total rewards for all customers.
+| Endpoint                                                  | Method | Description                                                                                                                 |
+|-----------------------------------------------------------|--------|-----------------------------------------------------------------------------------------------------------------------------|
+| `/api/customers`                                          | GET    | Retrieves a list of all customers.                                                                                          |
+| `/api/customers/{id}`                                     | GET    | Retrieves details of a specific customer by ID.                                                                             |
+| `/api/customers/{customerId}/transactions`                | GET    | Retrieves a list of transactions for a specific customer by their ID.                                                       |
+| `/api/customers/{customerId}/rewards?months={months}`     | GET    | Calculates and retrieves reward points for a specific customer over a specified period, with `months` as a query parameter. |
+| `/api/customers/rewards?months={months}`                  | GET    | Calculates and retrieves total reward points for all customers over a specified period, with `months` as a query parameter. |
+
+### Query Parameters
+
+- **months** (optional): The number of months to calculate rewards for. Defaults to 3 if not specified.
+
+-----
+Example Usage with Response Body
+
+Retrieve All Customers
+Endpoint: GET /api/customers
+Response:
+
+[
+    {
+        "id": 1,
+        "name": "Alice",
+        "email": "alice@example.com"
+    },
+    {
+        "id": 2,
+        "name": "Bob",
+        "email": "bob@example.com"
+    }
+]
+
+Retrieve Customer by ID
+Endpoint: GET /api/customers/{id}
+Response:
+
+{
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com"
+}
+
+Retrieve Transactions for a Customer
+Endpoint: GET /api/customers/{customerId}/transactions
+Response:
+
+
+[
+    {
+        "transactionId": 1,
+        "amount": 120.0,
+        "transactionDate": "2024-11-01T10:00:00"
+    },
+    {
+        "transactionId": 2,
+        "amount": 80.0,
+        "transactionDate": "2024-11-02T15:30:00"
+    }
+]
+
+
+Calculate Rewards for a Customer
+Endpoint: GET /api/customers/{customerId}/rewards?months={months}
+Response:
+
+{
+    "customerId": 1,
+    "totalRewards": 200.0,
+    "transactions": [
+        {
+            "transactionId": 1,
+            "amount": 120.0,
+            "transactionDate": "2024-11-01T10:00:00"
+        },
+        {
+            "transactionId": 2,
+            "amount": 80.0,
+            "transactionDate": "2024-11-02T15:30:00"
+        }
+    ]
+}
+
+
+Calculate Rewards for All Customers
+Endpoint: GET /api/customers/rewards?months={months}
+Response:
+
+{
+    "details": [
+        {
+           "1": 90,
+           "2": 40
+        }
+    ]
+}

@@ -1,84 +1,101 @@
 package com.rewards.controller;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import com.rewards.dto.CustomerRewardsResponse;
 import com.rewards.entity.Customer;
+import com.rewards.entity.Transaction;
 import com.rewards.service.CustomerService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
+class CustomerControllerTest {
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+    @Mock
+    private CustomerService customerService;
 
-import static org.mockito.Mockito.*;
+    @InjectMocks
+    private CustomerController customerController;
 
-public class CustomerControllerTest {
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-	@Mock
-	private CustomerService customerService;
+    @Test
+    void testGetAllCustomers() {
+        Customer customer = new Customer();
+        customer.setId(1L);
+        customer.setName("Alice");
+        when(customerService.getAllCustomers()).thenReturn(Collections.singletonList(customer));
 
-	@InjectMocks
-	private CustomerController customerController;
+        List<Customer> response = customerController.getAllCustomers();
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertEquals("Alice", response.get(0).getName());
+    }
 
-	@BeforeEach
-	public void setUp() {
-		MockitoAnnotations.openMocks(this);
-	}
+    @Test
+    void testGetCustomerById() {
+        Customer customer = new Customer();
+        customer.setId(1L);
+        customer.setName("Alice");
+        when(customerService.getCustomerById(1L)).thenReturn(customer);
 
-	@Test
-	public void testGetAllCustomers() {
-		List<Customer> mockCustomers = new ArrayList<>();
-		Customer customer = new Customer();
-		customer.setId(1L);
-		customer.setName("John Doe");
-		mockCustomers.add(customer);
+        ResponseEntity<Customer> response = customerController.getCustomerById(1L);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Alice", response.getBody().getName());
+    }
 
-		when(customerService.getAllCustomers()).thenReturn(mockCustomers);
+    @Test
+    void testGetTransactionsByCustomerId() {
+        Transaction transaction = new Transaction();
+        transaction.setId(1L);
+        transaction.setAmount(100);
+        when(customerService.getTransactionByCustomerId(1L)).thenReturn(Collections.singletonList(transaction));
 
-		List<Customer> customers = customerController.getAllCustomers();
+        ResponseEntity<List<Transaction>> response = customerController.getTransactionsByCustomerId(1L);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals(100, response.getBody().get(0).getAmount());
+    }
 
-		assertEquals(1, customers.size());
-		assertEquals("John Doe", customers.get(0).getName());
-		verify(customerService, times(1)).getAllCustomers();
-	}
+    @Test
+    void testCalculateRewards() {
+        CustomerRewardsResponse rewardsResponse = new CustomerRewardsResponse();
+        rewardsResponse.setCustomerId(1L);
+        rewardsResponse.setTotalRewards(120);
+        when(customerService.calculateRewards(1L, 3)).thenReturn(rewardsResponse);
 
-	@Test
-	public void testGetCustomerById() {
-		Long customerId = 1L;
-		Customer mockCustomer = new Customer();
-		mockCustomer.setId(customerId);
-		mockCustomer.setName("John Doe");
+        ResponseEntity<CustomerRewardsResponse> response = customerController.calculateRewards(1L, 3);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(120, response.getBody().getTotalRewards());
+    }
 
-		when(customerService.getCustomerById(customerId)).thenReturn(mockCustomer);
+    @Test
+    void testCalculateRewardsForAllCustomers() {
+        Map<Long, Integer> rewardsMap = Map.of(1L, 120, 2L, 90);
+        when(customerService.calculateRewardsForAllCustomers(3)).thenReturn(rewardsMap);
 
-		ResponseEntity<Customer> response = customerController.getCustomerById(customerId);
-
-		assertEquals(mockCustomer, response.getBody());
-		assertEquals(200, response.getStatusCode().value());
-		verify(customerService, times(1)).getCustomerById(customerId);
-	}
-
-	@Test
-	public void testCalculateRewards() {
-		Long customerId = 1L;
-		CustomerRewardsResponse mockResponse = new CustomerRewardsResponse();
-		mockResponse.setCustomerId(customerId);
-		mockResponse.setTotalRewards(120);
-		mockResponse.setTransactions(new ArrayList<>());
-
-		when(customerService.calculateRewards(customerId, 3)).thenReturn(mockResponse);
-
-		ResponseEntity<CustomerRewardsResponse> response = customerController.calculateRewards(customerId, 3);
-
-		assertEquals(mockResponse, response.getBody());
-		assertEquals(200, response.getStatusCode().value());
-		verify(customerService, times(1)).calculateRewards(customerId, 3);
-	}
-	
-
+        ResponseEntity<Map<Long, Integer>> response = customerController.calculateRewardsForAllCustomers(3);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, response.getBody().size());
+        assertEquals(120, response.getBody().get(1L));
+        assertEquals(90, response.getBody().get(2L));
+    }
 }

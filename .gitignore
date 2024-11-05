@@ -8,3 +8,6 @@ bin/
 out/ 
 .DS_Store 
 Thumbs.db 
+.classpath
+.gitattributes
+.project
