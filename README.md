@@ -72,7 +72,7 @@ The following are the available endpoints for the Customer Rewards API:
 ### Retrieve All Customers
 
 **Endpoint:** `GET /api/customers`
-
+```json
 **Response:**
 [
     {
