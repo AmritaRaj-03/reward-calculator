@@ -67,12 +67,13 @@ The following are the available endpoints for the Customer Rewards API:
 - **months** (optional): The number of months to calculate rewards for. Defaults to 3 if not specified.
 
 -----
-Example Usage with Response Body
+## Example Usage with Response Body
 
-Retrieve All Customers
-Endpoint: GET /api/customers
-Response:
+### Retrieve All Customers
 
+**Endpoint:** `GET /api/customers`
+
+**Response:**
 [
     {
         "id": 1,
@@ -85,22 +86,24 @@ Response:
         "email": "bob@example.com"
     }
 ]
+}
 
-Retrieve Customer by ID
-Endpoint: GET /api/customers/{id}
-Response:
 
+**Endpoint:** GET /api/customers/{id}
+
+**Response:** 
+[
 {
     "id": 1,
     "name": "Alice",
     "email": "alice@example.com"
 }
-
-Retrieve Transactions for a Customer
-Endpoint: GET /api/customers/{customerId}/transactions
-Response:
+]
 
 
+**Endpoint:** GET /api/customers/{customerId}/transactions
+
+**Response:**
 [
     {
         "transactionId": 1,
@@ -115,10 +118,9 @@ Response:
 ]
 
 
-Calculate Rewards for a Customer
-Endpoint: GET /api/customers/{customerId}/rewards?months={months}
-Response:
+**Endpoint:** GET /api/customers/{customerId}/rewards?months={months}
 
+**Response:**
 {
     "customerId": 1,
     "totalRewards": 200.0,
@@ -136,16 +138,13 @@ Response:
     ]
 }
 
+**Endpoint:** GET /api/customers/rewards?months={months}
 
-Calculate Rewards for All Customers
-Endpoint: GET /api/customers/rewards?months={months}
-Response:
-
+**Response:**
 {
     "details": [
-        {
-           "1": 90,
-           "2": 40
-        }
+        { "1": 90, "2": 40 }
     ]
 }
+
+
